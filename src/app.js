@@ -7,41 +7,65 @@ function App() {
     key: "",
     value: "",
   }); // Holds the current question
+  const [remainingQuestions, setRemainingQuestions] = useState([]); // Stores remaining questions
   const [userAnswer, setUserAnswer] = useState(""); // Tracks the user's input
   const [isStarted, setIsStarted] = useState(false); // Tracks whether the quiz has started
   const [postman, setPostman] = useState([]); // Stores all user answers
   const [showResults, setShowResults] = useState(false); // Toggles result display
+  const [quizOver, setQuizOver] = useState(false); // Indicates whether the quiz is over
+  const [restartQuiz, setRestartQuiz] = useState(false); // Tracks restart flag
 
-  // Helper function to get a random element from an array
-  const getRandomElement = (array) => {
-    return array[Math.floor(Math.random() * array.length)];
-  };
-
-  // Function to get a random question from the JSON
-  const getRandomQuestion = () => {
-    const categories = Object.keys(qs); // Get all categories from the JSON
-    const randomCategory = getRandomElement(categories); // Pick a random category
-    const subCategory = getRandomElement(qs[randomCategory]); // Get subcategories array
-    const keys = Object.keys(subCategory); // Get all keys from the subcategory
-    const randomKey = getRandomElement(keys); // Pick a random key
-    return {
-      category: randomCategory,
-      key: randomKey,
-      value: subCategory[randomKey],
-    };
-  };
-
-  // useEffect to trigger random question generation when "Start" is clicked
-  useEffect(() => {
-    if (isStarted) {
-      setRandomQuestion(getRandomQuestion());
-      setUserAnswer(""); // Clear the input field on new question
+  // Helper function to initialize all questions
+  const initializeQuestions = () => {
+    const questions = [];
+    for (const category in qs) {
+      qs[category].forEach((subCategory) => {
+        for (const key in subCategory) {
+          questions.push({
+            category,
+            key,
+            value: subCategory[key],
+          });
+        }
+      });
     }
-  }, [isStarted]);
+    return questions;
+  };
+
+  // Function to get a random question from a given array
+  const getRandomQuestion = (questions) => {
+    if (!questions || questions.length === 0) {
+      return null; // Handle empty array gracefully
+    }
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    return questions[randomIndex];
+  };
+
+  // useEffect to initialize the question pool when "Start" is clicked or quiz is restarted
+  useEffect(() => {
+    if (isStarted || restartQuiz) {
+      const questions = initializeQuestions();
+      setRemainingQuestions(questions); // Initialize the remaining questions
+      const firstQuestion = getRandomQuestion(questions);
+      setRandomQuestion(firstQuestion || { category: "", key: "", value: "" }); // Safely set the first question
+      setUserAnswer(""); // Clear the input field
+      setRestartQuiz(false); // Reset the restart flag
+    }
+  }, [isStarted, restartQuiz]);
 
   // Event handler for "Start" button click
   const handleStartClick = () => {
+    setQuizOver(false); // Reset the quiz-over flag
+    setPostman([]); // Clear previous answers
     setIsStarted(true);
+  };
+
+  // Event handler for "Restart" button click
+  const handleRestartClick = () => {
+    setQuizOver(false); // Reset the quiz-over flag
+    setPostman([]); // Clear previous answers
+    setRestartQuiz(true); // Trigger the restart process
+    setIsStarted(false); // Ensure quiz starts fresh
   };
 
   // Event handler for "Next" button click
@@ -56,10 +80,28 @@ function App() {
           correctAnswer: randomQuestion.value,
           isCorrect: userAnswer.trim() === randomQuestion.value.trim(),
         },
-      ]); // Store current answer
+      ]);
+
+      // Remove the current question from remainingQuestions
+      const updatedQuestions = remainingQuestions.filter(
+        (q) =>
+          !(
+            q.category === randomQuestion.category &&
+            q.key === randomQuestion.key
+          )
+      );
+      setRemainingQuestions(updatedQuestions);
+
+      // Check if there are still questions left
+      if (updatedQuestions.length > 0) {
+        setRandomQuestion(getRandomQuestion(updatedQuestions));
+      } else {
+        setQuizOver(true); // Mark the quiz as over
+        setIsStarted(false);
+      }
+
+      setUserAnswer(""); // Clear the input field
     }
-    setRandomQuestion(getRandomQuestion()); // Set the next question
-    setUserAnswer(""); // Clear the input field
   };
 
   // Event handler for "Result" button click
@@ -77,7 +119,7 @@ function App() {
 
   // Renders the list of user answers in the result section
   const renderResults = () => (
-    <div className="result p-6 bg-white shadow-lg rounded-lg">
+    <div className="result p-6 bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto">
       <h2 className="text-6xl font-bold text-green-500 mb-8">User Answers</h2>
       <ol className="list-decimal list-inside text-4xl space-y-6">
         {postman.map((item, index) => (
@@ -94,7 +136,6 @@ function App() {
         className="mt-10 px-6 py-3 text-4xl bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         onClick={() => {
           setShowResults(false);
-          setPostman([]); // Clear answers
         }}
       >
         Back to Quiz
@@ -108,7 +149,18 @@ function App() {
       onKeyDown={handleKeyDown}
       tabIndex="0"
     >
-      {showResults ? (
+      {quizOver ? (
+        <div className="text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
+          <h2 className="text-6xl font-bold text-red-500">Quiz Over</h2>
+          {renderResults()} {/* Show results along with restart button */}
+          <button
+            className="px-6 py-3 bg-green-500 text-white text-4xl rounded-lg hover:bg-green-600"
+            onClick={handleRestartClick}
+          >
+            Restart Quiz
+          </button>
+        </div>
+      ) : showResults ? (
         renderResults()
       ) : (
         <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-16 md:space-y-0 md:space-x-16">
@@ -173,5 +225,3 @@ function App() {
 }
 
 export default App;
-
-/*new version*/
