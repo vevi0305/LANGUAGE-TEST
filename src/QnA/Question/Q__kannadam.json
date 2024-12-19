@@ -1,0 +1,36 @@
+{
+  "common": [
+    {
+      "vanakkam": "namaskara",
+      "saptingala": "oota aitta",
+      "unavu": "aagara",
+      "enga": "elli",
+      "anga": "alli",
+      "inga": "illi",
+      "soodana": "bisi",
+      "indru": "ivathu",
+      "netru": "ninne",
+      "naalai": "naale",
+      "anaivarukkum": "ellarigu",
+      "irukku": "undu",
+      "irukka": "iddeera",
+      "illai": "illa",
+      "kadavul": "devaru",
+      "nee": "neenu",
+      "naan": "naanu",
+      "naam": "naavu",
+      "naangal": "naavu",
+      "neengal": "neevu"
+    }
+  ],
+  "relationship": [
+    {
+      "father": "appa",
+      "mother": "amma",
+      "brother": "thamma",
+      "sister": "thangi",
+      "grandfather": "ajji",
+      "grandmother": "ajja"
+    }
+  ]
+}
