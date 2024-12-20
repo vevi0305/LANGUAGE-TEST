@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import qs from "./QnA/Question/Q__kannadam.json"; // Import the JSON file
+import qs from "./QnA/Q__kannadam.json";
 
 function App() {
   const [randomQuestion, setRandomQuestion] = useState({
@@ -14,6 +14,11 @@ function App() {
   const [showResults, setShowResults] = useState(false); // Toggles result display
   const [quizOver, setQuizOver] = useState(false); // Indicates whether the quiz is over
   const [restartQuiz, setRestartQuiz] = useState(false); // Tracks restart flag
+  const [isAddMode, setIsAddMode] = useState(false); // Toggles add mode
+  const [newCategory, setNewCategory] = useState("");
+  const [newKey, setNewKey] = useState("");
+  const [newValue, setNewValue] = useState("");
+  const [addStatus, setAddStatus] = useState(""); // Tracks the status of data addition
 
   // Helper function to initialize all questions
   const initializeQuestions = () => {
@@ -117,6 +122,56 @@ function App() {
     }
   };
 
+  // Handles data addition to the JSON file
+  const handleAddClick = async () => {
+    if (newCategory && newKey && newValue) {
+      const data = { category: newCategory, key: newKey, value: newValue };
+      // Check for duplicate entries in the remainingQuestions
+      const isDuplicate = remainingQuestions.some(
+        (q) =>
+          q.category === newCategory && q.key === newKey && q.value === newValue
+      );
+
+      if (isDuplicate) {
+        setAddStatus("Duplicate entry detected! Please add unique values.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          setAddStatus(
+            "Data added successfully! Add another or click 'Cancel' to return."
+          );
+
+          // Update the local state with the new question
+          setRemainingQuestions((prev) => [
+            ...prev,
+            { category: newCategory, key: newKey, value: newValue },
+          ]);
+
+          setNewCategory("");
+          setNewKey("");
+          setNewValue("");
+        } else {
+          setAddStatus("Failed to add data!");
+        }
+      } catch (error) {
+        console.error("Error adding data:", error);
+        setAddStatus("Error occurred while adding data.");
+      }
+    } else {
+      setAddStatus("All fields are required!");
+    }
+  };
+
   // Renders the list of user answers in the result section
   const renderResults = () => (
     <div className="result p-6 bg-white shadow-lg rounded-lg max-h-96 overflow-y-auto">
@@ -164,15 +219,32 @@ function App() {
         renderResults()
       ) : (
         <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-16 md:space-y-0 md:space-x-16">
-          {/* Question Section */}
           <div className="question text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
-            <h1 className="text-7xl font-bold text-blue-500">Quiz App</h1>
-
-            {!isStarted ? (
-              <p className="text-5xl text-gray-700">
-                Click "Start" to begin the quiz!
-              </p>
-            ) : (
+            {!isStarted && !isAddMode ? (
+              <div className="text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
+                <h1 className="text-7xl font-bold text-blue-500">Quiz App</h1>
+                <p className="text-5xl text-gray-700">
+                  Click "Start" to begin the quiz or "Add Some" to add new
+                  questions!
+                </p>
+                <div className="space-x-6 mt-8">
+                  <button
+                    className="px-6 py-3 bg-green-500 text-white text-4xl rounded-lg hover:bg-green-600"
+                    onClick={handleStartClick}
+                  >
+                    Start
+                  </button>
+                  <button
+                    className="px-6 py-3 bg-orange-500 text-white text-4xl rounded-lg hover:bg-orange-600"
+                    onClick={() => {
+                      setIsAddMode(true), setIsStarted(false);
+                    }}
+                  >
+                    Add Some
+                  </button>
+                </div>
+              </div>
+            ) : isStarted ? (
               <>
                 <p className="text-5xl text-gray-700">
                   <strong>Category:</strong> {randomQuestion.category || "---"}
@@ -190,33 +262,50 @@ function App() {
                   />
                 </div>
               </>
-            )}
-
-            <div className="space-x-6 mt-8">
-              {!isStarted ? (
+            ) : (
+              <div className="p-6 bg-white shadow-lg rounded-lg space-x-4">
+                <input
+                  type="text"
+                  placeholder="Category"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="px-6 py-3 border text-2xl"
+                />
+                <input
+                  type="text"
+                  placeholder="Key"
+                  value={newKey}
+                  onChange={(e) => setNewKey(e.target.value)}
+                  className="px-6 py-3 border text-2xl"
+                />
+                <input
+                  type="text"
+                  placeholder="Value"
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
+                  className="px-6 py-3 border text-2xl"
+                />
                 <button
-                  className="px-6 py-3 bg-green-500 text-white text-4xl rounded-lg hover:bg-green-600"
-                  onClick={handleStartClick}
+                  className="px-6 py-3 bg-blue-500 text-white text-2xl rounded-lg hover:bg-blue-600"
+                  onClick={() => {
+                    handleAddClick();
+                    setIsStarted(false);
+                    setIsAddMode(true);
+                  }}
                 >
-                  Start
+                  Add
                 </button>
-              ) : (
-                <>
-                  <button
-                    className="px-6 py-3 bg-blue-500 text-white text-4xl rounded-lg hover:bg-blue-600"
-                    onClick={handleNextClick}
-                  >
-                    Next
-                  </button>
-                  <button
-                    className="px-6 py-3 bg-red-500 text-white text-4xl rounded-lg hover:bg-red-600"
-                    onClick={handleResultClick}
-                  >
-                    Result
-                  </button>
-                </>
-              )}
-            </div>
+                {addStatus && <p className="text-red-500 mt-4">{addStatus}</p>}
+                <button
+                  className="px-6 py-3 bg-gray-500 text-white text-4xl rounded-lg hover:bg-gray-600"
+                  onClick={() => {
+                    setIsAddMode(false), setIsStarted(true);
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

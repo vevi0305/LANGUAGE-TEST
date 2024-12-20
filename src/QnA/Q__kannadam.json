@@ -1,0 +1,57 @@
+{
+  "common": [
+    {
+      "vanakkam": "namaskara",
+      "saptingala": "oota aitta",
+      "unavu": "aagara",
+      "enga": "elli",
+      "anga": "alli",
+      "inga": "illi",
+      "soodana": "bisi",
+      "indru": "ivathu",
+      "netru": "ninne",
+      "naalai": "naale",
+      "anaivarukkum": "ellarigu",
+      "irukku": "undu",
+      "irukka": "iddeera",
+      "illai": "illa",
+      "kadavul": "devaru",
+      "nee": "neenu",
+      "naan": "naanu",
+      "naam": "naavu",
+      "naangal": "naavu",
+      "neengal": "neevu"
+    }
+  ],
+  "relationship": [
+    {
+      "father": "appa",
+      "mother": "amma",
+      "brother": "thamma",
+      "sister": "thangi",
+      "grandfather": "ajji",
+      "grandmother": "ajja"
+    }
+  ],
+  "groceries": [
+    {
+      "paruppu": "bele",
+      "butter": "benne",
+      "malli": "dhaniya",
+      "vellam": "bella",
+      "honey": "jenu thuppa",
+      "milagu": "kal menasu",
+      "badam": "badhami",
+      "thuvaram paruppu": "thogari bele",
+      "ghee": "thuppa",
+      "dry milagai": "ona mensinakai",
+      "elakkai": "yelakki",
+      "coconut": "thenigna kaayi",
+      "lavangam": "lavanka",
+      "vendhayam": "menthya",
+      "paasi paruppi": "hesaru bele",
+      "kadugu": "saasive",
+      "chilli": "mensinakaai"
+    }
+  ]
+}
