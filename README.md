@@ -10,7 +10,9 @@ npm install webpack webpack-cli webpack-dev-server html-webpack-plugin css-loade
 npm install webpack-merge 
 npx tailwindcss init
 npm install json-loader 
+npm install express cors
+npm install concurrently --save-dev
 
 Then copy all the files and store them in order
 Then Type
-npm start 
+npm run runN
