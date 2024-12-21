@@ -20,7 +20,14 @@
       "naan": "naanu",
       "naam": "naavu",
       "naangal": "naavu",
-      "neengal": "neevu"
+      "neengal": "neevu",
+      "pannunga": "maadri",
+      "seinga": "maadri",
+      "saththam": "sabdhaa",
+      "vainga": "idri",
+      "vainga_2": "hakidaru",
+      "kuraivu": "kadime",
+      "neraivu": "purnagolisuvika"
     }
   ],
   "relationship": [
@@ -51,7 +58,18 @@
       "vendhayam": "menthya",
       "paasi paruppi": "hesaru bele",
       "kadugu": "saasive",
-      "chilli": "mensinakaai"
+      "chilli": "mensinakaai",
+      "thatta payaru": "alusunde kaalu"
+    }
+  ],
+  "sentence": [
+    {
+      "nalla irukkingala": "chenaagi iddeera",
+      "atha pannatha": "adannu maadabedaa",
+      "atha seiyathey": "adannu maadabedaa",
+      "saththamaa irukku": "sabdhaa joraagidhe",
+      "ithu romba neraiva irukku": "iddhe thumba puuraisutthadhe",
+      "unghala pathu romba naal achi": "nimannu nodi thumba dhina aaithu"
     }
   ]
 }

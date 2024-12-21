@@ -115,10 +115,16 @@ function App() {
     setIsStarted(false); // Stops the quiz
   };
 
-  // Event handler for keyboard enter key
+  // Event handler for keyboard navigation
   const handleKeyDown = (event) => {
-    if (event.key === "Enter" && isStarted) {
-      handleNextClick(); // Trigger the next button click
+    if (isStarted) {
+      if (event.key === "Enter") {
+        handleNextClick(); // Trigger the next button click
+      } else if (event.key === "ArrowRight") {
+        handleNextClick();
+      } else if (event.key === "ArrowDown") {
+        handleResultClick();
+      }
     }
   };
 
@@ -204,7 +210,9 @@ function App() {
       onKeyDown={handleKeyDown}
       tabIndex="0"
     >
-      {quizOver ? (
+      {showResults ? (
+        renderResults()
+      ) : quizOver ? (
         <div className="text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
           <h2 className="text-6xl font-bold text-red-500">Quiz Over</h2>
           {renderResults()} {/* Show results along with restart button */}
@@ -215,8 +223,6 @@ function App() {
             Restart Quiz
           </button>
         </div>
-      ) : showResults ? (
-        renderResults()
       ) : (
         <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-16 md:space-y-0 md:space-x-16">
           <div className="question text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
@@ -234,14 +240,53 @@ function App() {
                   >
                     Start
                   </button>
-                  <button
-                    className="px-6 py-3 bg-orange-500 text-white text-4xl rounded-lg hover:bg-orange-600"
-                    onClick={() => {
-                      setIsAddMode(true), setIsStarted(false);
-                    }}
-                  >
-                    Add Some
-                  </button>
+                  <p className="text-5xl text-gray-700">
+                    Add new questions! here
+                  </p>
+                  <div className=" p-6 bg-white shadow-lg rounded-lg space-x-4">
+                    <input
+                      type="text"
+                      placeholder="Category"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      className="inputdata px-6 py-3 border text-2xl"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Key"
+                      value={newKey}
+                      onChange={(e) => setNewKey(e.target.value)}
+                      className="inputdata px-6 py-3 border text-2xl"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Value"
+                      value={newValue}
+                      onChange={(e) => setNewValue(e.target.value)}
+                      className="inputdata px-6 py-3 border text-2xl"
+                    />
+                    <button
+                      className="px-6 py-3 bg-blue-500 text-white text-2xl rounded-lg hover:bg-blue-600"
+                      onClick={() => {
+                        handleAddClick();
+                        setIsStarted(false);
+                        setIsAddMode(true);
+                      }}
+                    >
+                      Add
+                    </button>
+                    {addStatus && (
+                      <p className="text-red-500 mt-4">{addStatus}</p>
+                    )}
+                    <button
+                      className="px-6 py-3 bg-gray-500 text-white text-4xl rounded-lg hover:bg-gray-600"
+                      onClick={() => {
+                        setIsAddMode(false), setIsStarted(true);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : isStarted ? (
@@ -261,50 +306,25 @@ function App() {
                     onChange={(e) => setUserAnswer(e.target.value)}
                   />
                 </div>
+                {isStarted && !quizOver && (
+                  <div className="space-y-6">
+                    <button
+                      className="px-8 py-3 space-y-6 bg-blue-500 text-white text-4xl rounded-lg hover:bg-blue-600"
+                      onClick={handleNextClick}
+                    >
+                      Next
+                    </button>
+                    <button
+                      className="px-8 py-3 space-y-6 bg-red-500 text-white text-4xl rounded-lg hover:bg-red-600"
+                      onClick={handleResultClick}
+                    >
+                      Result
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
-              <div className="p-6 bg-white shadow-lg rounded-lg space-x-4">
-                <input
-                  type="text"
-                  placeholder="Category"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="px-6 py-3 border text-2xl"
-                />
-                <input
-                  type="text"
-                  placeholder="Key"
-                  value={newKey}
-                  onChange={(e) => setNewKey(e.target.value)}
-                  className="px-6 py-3 border text-2xl"
-                />
-                <input
-                  type="text"
-                  placeholder="Value"
-                  value={newValue}
-                  onChange={(e) => setNewValue(e.target.value)}
-                  className="px-6 py-3 border text-2xl"
-                />
-                <button
-                  className="px-6 py-3 bg-blue-500 text-white text-2xl rounded-lg hover:bg-blue-600"
-                  onClick={() => {
-                    handleAddClick();
-                    setIsStarted(false);
-                    setIsAddMode(true);
-                  }}
-                >
-                  Add
-                </button>
-                {addStatus && <p className="text-red-500 mt-4">{addStatus}</p>}
-                <button
-                  className="px-6 py-3 bg-gray-500 text-white text-4xl rounded-lg hover:bg-gray-600"
-                  onClick={() => {
-                    setIsAddMode(false), setIsStarted(true);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
+              <div></div>
             )}
           </div>
         </div>
