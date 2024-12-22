@@ -14,7 +14,6 @@ function App() {
   const [showResults, setShowResults] = useState(false); // Toggles result display
   const [quizOver, setQuizOver] = useState(false); // Indicates whether the quiz is over
   const [restartQuiz, setRestartQuiz] = useState(false); // Tracks restart flag
-  const [isAddMode, setIsAddMode] = useState(false); // Toggles add mode
   const [newCategory, setNewCategory] = useState("");
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
@@ -132,14 +131,25 @@ function App() {
   const handleAddClick = async () => {
     if (newCategory && newKey && newValue) {
       const data = { category: newCategory, key: newKey, value: newValue };
-      // Check for duplicate entries in the remainingQuestions
-      const isDuplicate = remainingQuestions.some(
+
+      // Check for duplicate in the JSON data (qs)
+      const categoryExists = qs[newCategory] || [];
+      const isDuplicateGlobal = categoryExists.some((subCategory) =>
+        Object.keys(subCategory).some(
+          (key) => key === newKey && subCategory[key] === newValue
+        )
+      );
+
+      // Check for duplicate in the remainingQuestions state
+      const isDuplicateLocal = remainingQuestions.some(
         (q) =>
           q.category === newCategory && q.key === newKey && q.value === newValue
       );
 
-      if (isDuplicate) {
+      if (isDuplicateGlobal || isDuplicateLocal) {
         setAddStatus("Duplicate entry detected! Please add unique values.");
+        setNewKey("");
+        setNewValue(""); // Clear specific inputs for keys and values
         return;
       }
 
@@ -226,7 +236,7 @@ function App() {
       ) : (
         <div className="flex flex-col md:flex-row w-full justify-center items-center space-y-16 md:space-y-0 md:space-x-16">
           <div className="question text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
-            {!isStarted && !isAddMode ? (
+            {!isStarted ? (
               <div className="text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
                 <h1 className="text-7xl font-bold text-blue-500">Quiz App</h1>
                 <p className="text-5xl text-gray-700">
@@ -249,28 +259,27 @@ function App() {
                       placeholder="Category"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
-                      className="inputdata px-6 py-3 border text-2xl"
+                      className="inputdata category px-6 py-3 border text-2xl"
                     />
                     <input
                       type="text"
                       placeholder="Key"
                       value={newKey}
                       onChange={(e) => setNewKey(e.target.value)}
-                      className="inputdata px-6 py-3 border text-2xl"
+                      className="inputdata keys px-6 py-3 border text-2xl"
                     />
                     <input
                       type="text"
                       placeholder="Value"
                       value={newValue}
                       onChange={(e) => setNewValue(e.target.value)}
-                      className="inputdata px-6 py-3 border text-2xl"
+                      className="inputdata values px-6 py-3 border text-2xl"
                     />
                     <button
                       className="px-6 py-3 bg-blue-500 text-white text-2xl rounded-lg hover:bg-blue-600"
                       onClick={() => {
                         handleAddClick();
                         setIsStarted(false);
-                        setIsAddMode(true);
                       }}
                     >
                       Add
@@ -281,7 +290,7 @@ function App() {
                     <button
                       className="px-6 py-3 bg-gray-500 text-white text-4xl rounded-lg hover:bg-gray-600"
                       onClick={() => {
-                        setIsAddMode(false), setIsStarted(true);
+                        setIsStarted(true);
                       }}
                     >
                       Cancel
