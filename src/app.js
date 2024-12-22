@@ -336,14 +336,14 @@ function App() {
                 <div>
                   <input
                     type="text"
-                    className="px-6 py-3 text-4xl border rounded-lg shadow-sm w-96"
+                    className="px-6 py-3 text-4xl border rounded-lg shadow-sm w-full"
                     placeholder="Type your answer here..."
                     value={userAnswer}
                     onChange={(e) => setUserAnswer(e.target.value)}
                   />
                 </div>
                 {isStarted && !quizOver && (
-                  <div className="space-y-6">
+                  <div className="nextResult space-x-6 ">
                     <button
                       className="px-8 py-3 space-y-6 bg-blue-500 text-white text-4xl rounded-lg hover:bg-blue-600"
                       onClick={handleNextClick}
