@@ -259,23 +259,25 @@ function App() {
           <div className="question text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
             {!isStarted ? (
               <div className="text-center p-10 bg-white shadow-lg rounded-lg space-y-8">
-                <h1 className="text-7xl font-bold text-blue-500">Quiz App</h1>
+                <h1 className="text-7xl font-bold text-blue-500">
+                  Language Test
+                </h1>
                 <p className="text-5xl text-gray-700">
-                  Click "Start" to begin the quiz or "Add Some" to add new
-                  questions!
+                  Click "Start" to begin the Test
                 </p>
-                <div className="space-x-6 mt-8">
+                <div className=" mt-8">
                   <button
                     className="px-6 py-3 bg-green-500 text-white text-4xl rounded-lg hover:bg-green-600"
                     onClick={handleStartClick}
                   >
                     Start
                   </button>
+                  <p className="text-5xl text-gray-700">Or</p>
                   <p className="text-5xl text-gray-700">
-                    Add new questions! here
+                    Add New Questions Here
                   </p>
                   <div
-                    className=" p-6 bg-white shadow-lg rounded-lg space-x-4"
+                    className=" p-6 bg-white shadow-lg rounded-lg space-y-6 space-x-5"
                     onKeyDown={triggerAddButton}
                     tabIndex="0"
                   >
@@ -289,7 +291,7 @@ function App() {
                     />
                     <input
                       type="text"
-                      placeholder="Key"
+                      placeholder="Type Your Language..."
                       value={newKey}
                       onChange={(e) => setNewKey(e.target.value)}
                       className="inputdata keys px-6 py-3 border text-2xl"
@@ -297,31 +299,25 @@ function App() {
                     />
                     <input
                       type="text"
-                      placeholder="Value"
+                      placeholder="Type Converted Language..."
                       value={newValue}
                       onChange={(e) => setNewValue(e.target.value)}
                       className="inputdata values px-6 py-3 border text-2xl"
                     />
-                    <button
-                      className="px-6 py-3 bg-blue-500 text-white text-2xl rounded-lg hover:bg-blue-600"
-                      onClick={() => {
-                        handleAddClick();
-                        setIsStarted(false);
-                      }}
-                    >
-                      Add
-                    </button>
-                    {addStatus && (
-                      <p className="text-red-500 mt-4">{addStatus}</p>
-                    )}
-                    <button
-                      className="px-6 py-3 bg-gray-500 text-white text-4xl rounded-lg hover:bg-gray-600"
-                      onClick={() => {
-                        setIsStarted(true);
-                      }}
-                    >
-                      Cancel
-                    </button>
+                    <div className="AddCancel ">
+                      {addStatus && (
+                        <p className="text-red-500 mt-4">{addStatus}</p>
+                      )}
+                      <button
+                        className="px-6 py-3 bg-blue-500 text-white text-4xl rounded-lg hover:bg-blue-600"
+                        onClick={() => {
+                          handleAddClick();
+                          setIsStarted(false);
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
