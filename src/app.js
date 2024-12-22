@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import qs from "./QnA/Q__kannadam.json";
 
 function App() {
@@ -18,6 +18,8 @@ function App() {
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
   const [addStatus, setAddStatus] = useState(""); // Tracks the status of data addition
+  const categoryInputRef = useRef(null);
+  const dataInputRef = useRef(null);
 
   // Helper function to initialize all questions
   const initializeQuestions = () => {
@@ -117,13 +119,23 @@ function App() {
   // Event handler for keyboard navigation
   const handleKeyDown = (event) => {
     if (isStarted) {
-      if (event.key === "Enter") {
-        handleNextClick(); // Trigger the next button click
-      } else if (event.key === "ArrowRight") {
+      if (event.key === "ArrowRight") {
         handleNextClick();
       } else if (event.key === "ArrowDown") {
         handleResultClick();
       }
+    }
+  };
+
+  useEffect(() => {
+    if (categoryInputRef.current) {
+      categoryInputRef.current.focus();
+    }
+  }, [newCategory]);
+
+  const triggerAddButton = (event) => {
+    if (event.key == "Enter") {
+      handleAddClick();
     }
   };
 
@@ -150,6 +162,9 @@ function App() {
         setAddStatus("Duplicate entry detected! Please add unique values.");
         setNewKey("");
         setNewValue(""); // Clear specific inputs for keys and values
+        if (dataInputRef.current) {
+          dataInputRef.current.focus();
+        }
         return;
       }
 
@@ -166,6 +181,9 @@ function App() {
           setAddStatus(
             "Data added successfully! Add another or click 'Cancel' to return."
           );
+          if (categoryInputRef.current) {
+            categoryInputRef.current.focus();
+          }
 
           // Update the local state with the new question
           setRemainingQuestions((prev) => [
@@ -184,6 +202,9 @@ function App() {
         setAddStatus("Error occurred while adding data.");
       }
     } else {
+      if (categoryInputRef.current) {
+        categoryInputRef.current.focus();
+      }
       setAddStatus("All fields are required!");
     }
   };
@@ -253,13 +274,18 @@ function App() {
                   <p className="text-5xl text-gray-700">
                     Add new questions! here
                   </p>
-                  <div className=" p-6 bg-white shadow-lg rounded-lg space-x-4">
+                  <div
+                    className=" p-6 bg-white shadow-lg rounded-lg space-x-4"
+                    onKeyDown={triggerAddButton}
+                    tabIndex="0"
+                  >
                     <input
                       type="text"
                       placeholder="Category"
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
                       className="inputdata category px-6 py-3 border text-2xl"
+                      ref={categoryInputRef} // Attach ref
                     />
                     <input
                       type="text"
@@ -267,6 +293,7 @@ function App() {
                       value={newKey}
                       onChange={(e) => setNewKey(e.target.value)}
                       className="inputdata keys px-6 py-3 border text-2xl"
+                      ref={dataInputRef}
                     />
                     <input
                       type="text"
